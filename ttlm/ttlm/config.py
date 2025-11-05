@@ -11,6 +11,7 @@ import yaml
 
 import ttlm.model
 import ttlm.tokenizer.ascii
+import ttlm.tokenizer.bpe
 
 HIDDEN_DIM_DIVISOR = 64
 FF_DIM_MULTIPLIER = 4
@@ -30,7 +31,8 @@ class DataConfig:
 class TokenizerConfig:
     """Configuration for tokenizer."""
 
-    module: type[ttlm.tokenizer.base.Tokenizer] = ttlm.tokenizer.ascii.AsciiTokenizer
+    module: type[ttlm.tokenizer.base.Tokenizer] = ttlm.tokenizer.bpe.BPETokenizer
+    # module: type[ttlm.tokenizer.base.Tokenizer] = ttlm.tokenizer.ascii.AsciiTokenizer
 
 
 @dataclass
@@ -80,7 +82,7 @@ class PreTrainingConfig:
     tokenizer: TokenizerConfig = field(default_factory=TokenizerConfig)
 
     epochs: int = 30
-    device: Literal["cuda", "cpu"] = "cuda"
+    device: Literal["cuda", "cpu", "mps"] = "mps"
     dtype: torch.dtype = torch.float32
     max_steps: int | float = float("inf")
     val_check_interval: int = 2048
@@ -91,9 +93,11 @@ class PreTrainingConfig:
         if self.ckpt_path is None:
             self.ckpt_path = f"logs/pretrain/{self.experiment}"
         if self.model.num_layers is None:
-            self.model.num_layers = max(2, self.model.hidden_dim // HIDDEN_DIM_DIVISOR)
+            self.model.num_layers = max(
+                2, self.model.hidden_dim // HIDDEN_DIM_DIVISOR)
         if self.model.num_heads is None:
-            self.model.num_heads = max(1, self.model.hidden_dim // HIDDEN_DIM_DIVISOR)
+            self.model.num_heads = max(
+                1, self.model.hidden_dim // HIDDEN_DIM_DIVISOR)
             while (
                 self.model.hidden_dim % self.model.num_heads != 0
                 and self.model.num_heads > 1
