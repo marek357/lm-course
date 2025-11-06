@@ -7,9 +7,8 @@ from tqdm import tqdm
 class BPETokenizer(Tokenizer):
     def __init__(self, dataset, num_merges: int = 10, max_vocab_size: int = 10000) -> None:
         super().__init__()
-        self.bpe_ranks = {}
         self.vocab = [chr(c) for c in range(256)]
-        self.inverse_vocab = {k: v for k, v in enumerate(self.vocab)}
+        self.inverse_vocab = {v: k for k, v in enumerate(self.vocab)}
         self.num_merges = num_merges
         self.max_vocab_size = max_vocab_size
 

@@ -82,7 +82,7 @@ class PreTrainingConfig:
     tokenizer: TokenizerConfig = field(default_factory=TokenizerConfig)
 
     epochs: int = 30
-    device: Literal["cuda", "cpu", "mps"] = "mps"
+    device: Literal["cuda", "cpu", "mps"] = "cuda"
     dtype: torch.dtype = torch.float32
     max_steps: int | float = float("inf")
     val_check_interval: int = 2048
